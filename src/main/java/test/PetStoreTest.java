@@ -1,15 +1,17 @@
-package PetStore;
+package test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
+import main.BaseTest;
+import main.Pet;
 import org.testng.annotations.Test;
 import static org.testng.AssertJUnit.assertEquals;
 
 @Epic("PetStore API Tests")
 @Feature("Pet Management")
-public class PetStoreTest extends BaseTest{
+public class PetStoreTest extends BaseTest {
 
     @Test
     @Story("Добавление(post) нового pet")
@@ -146,7 +148,7 @@ public class PetStoreTest extends BaseTest{
     public void testPostPetUploadImage() throws JsonProcessingException{
         int petId=1;
         String additionalMetadata="it`s a dog";
-        String filePath="src//main//java//PetStore//img//dog1.jpg";
+        String filePath="src//main//java//main//img//dog1.jpg";
         Response response= petStoragePage.postPetUploadImage(petId,additionalMetadata,filePath);
 
         response.then().statusCode(200);

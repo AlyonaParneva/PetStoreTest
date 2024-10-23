@@ -1,4 +1,4 @@
-package PetStore;
+package main;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

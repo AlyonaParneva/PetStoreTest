@@ -1,4 +1,4 @@
-package PetStore;
+package main;
 import org.testng.annotations.BeforeClass;
 
 public class BaseTest {
