@@ -1,25 +1,28 @@
 package PetStore;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 
 import java.io.File;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
 public class PetStorePage {
+    private final String BASE_URL;
 
-    private final String BASE_URL="https://petstore.swagger.io/v2";
+    public PetStorePage() {
+        BASE_URL = ConfProperties.PROPERTIES.getProperty("BASE_URL");
+        System.out.println("Loaded BASE_URL: " + BASE_URL);
+        if (BASE_URL == null) {
+            throw new RuntimeException("BASE_URL not found in configuration file.");
+        }
+    }
 
-    public Response addNewPet(int petId, int categoryId, String nameCategory, String name, int tagId, String nameTags,String status){
-        String newPet = "{"+
-                "\"id\": " + petId + ", " +
-                "\"category\": { \"id\": " + categoryId + ", \"name\": \"" + nameCategory + "\" }," +
-                "\"name\": \"" + name + "\"," +
-                "\"photoUrls\": [ \"string\" ]," +
-                "\"tags\": [ { \"id\": " + tagId + ", \"name\": \"" + nameTags + "\" } ]," +
-                "\"status\": \"" + status + "\"" +
-                " }";
+    public Response addNewPet(int petId, int categoryId, String nameCategory, String name, int tagId, String nameTags,String status) throws JsonProcessingException {
+        Pet pet=new Pet(petId,categoryId,nameCategory,name, List.of("string"),List.of(new Pet.Tag(tagId,nameTags)),status);
+        String newPet= pet.toJson();
 
         return given()
                 .relaxedHTTPSValidation()
@@ -28,6 +31,8 @@ public class PetStorePage {
                 .body(newPet)
                 .when()
                 .post("/pet/");
+
+
         }
 
     public Response getPetById(int petId){
@@ -42,7 +47,7 @@ public class PetStorePage {
         return given()
                 .relaxedHTTPSValidation()
                 .baseUri(BASE_URL)
-                .queryParam("status")
+                .queryParam("status",status)
                 .when()
                 .get("/pet/findByStatus/");
     }
@@ -52,21 +57,15 @@ public class PetStorePage {
                 .relaxedHTTPSValidation()
                 .baseUri(BASE_URL)
                 .contentType("application/x-www-form-urlencoded")
-                .formParam("name")
-                .formParam("status")
+                .formParam("name",name)
+                .formParam("status",status)
                 .when()
                 .post("pet/"+petId);
     }
 
-    public Response putPetUpdate(int petId, int categoryId, String nameCategory, String name, int tagId, String nameTags,String status) {
-        String updatePet = "{" +
-                "\"id\": " + petId + ", " +
-                "\"category\": { \"id\": " + categoryId + ", \"name\": \"" + nameCategory + "\" }," +
-                "\"name\": \"" + name + "\"," +
-                "\"photoUrls\": [ \"string\" ]," +
-                "\"tags\": [ { \"id\": " + tagId + ", \"name\": \"" + nameTags + "\" } ]," +
-                "\"status\": \"" + status + "\"" +
-                " }";
+    public Response putPetUpdate(int petId, int categoryId, String nameCategory, String name, int tagId, String nameTags,String status) throws JsonProcessingException {
+        Pet pet=new Pet(petId,categoryId,nameCategory,name, List.of("string"),List.of(new Pet.Tag(tagId,nameTags)),status);
+        String updatePet= pet.toJson();
 
         return given()
                 .relaxedHTTPSValidation()
